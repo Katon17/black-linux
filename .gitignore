@@ -1,0 +1,15 @@
+# build output (the .deb goes to GitHub Releases, not the repo)
+/release/
+/build/
+/dist/
+/out/
+_deps/
+*.o
+*.a
+*.deb
+# never commit game files
+*.iso
+*.xiso
+*.xbe
+/assets/
+/game/

@@ -1,0 +1,36 @@
+#!/bin/bash
+# black-linux: starts Black (native Linux build). The first start builds the game from your own copy
+# (black-linux-build); later starts go straight to the game.
+#   black-linux [--windowed] [--rebuild]
+DATA="${BLACK_DATA_DIR:-/usr/share/black-linux}"
+HOME_DIR="${BLACK_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/black-linux}"
+VERSION="@VERSION@"
+export BLACK_DATA_DIR="$DATA"
+
+REBUILD=0
+for a in "$@"; do
+    case "$a" in
+        --windowed) export BLACK_WINDOWED=1 ;;
+        --rebuild) REBUILD=1 ;;
+    esac
+done
+
+GUI=""
+[[ -t 1 ]] || GUI="--gui"   # started from the menu: dialogs instead of a terminal
+
+stamp_version=$(cut -d' ' -f1 "$HOME_DIR/bin/.stamp" 2>/dev/null)
+if [[ $REBUILD == 1 || ! -x $HOME_DIR/bin/BLACK || $stamp_version != "$VERSION" ]]; then
+    if [[ -z $GUI ]]; then
+        black-linux-build $([[ $REBUILD == 1 ]] && echo --force) || exit 1
+    elif command -v zenity >/dev/null 2>&1; then
+        black-linux-build --gui $([[ $REBUILD == 1 ]] && echo --force) || exit 1
+    else
+        x-terminal-emulator -e bash -c "black-linux-build; echo; read -rp 'Enter to close'" || exit 1
+        [[ -x $HOME_DIR/bin/BLACK ]] || exit 1
+    fi
+fi
+
+# Intel/AMD Mesa: keep the shader cache with the game's other files
+export MESA_SHADER_CACHE_DIR="${MESA_SHADER_CACHE_DIR:-$HOME_DIR/mesa_cache}"
+cd "$HOME_DIR" || exit 1
+exec "$HOME_DIR/bin/BLACK" "$@"

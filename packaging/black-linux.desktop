@@ -1,0 +1,23 @@
+[Desktop Entry]
+Type=Application
+Name=Black (Linux Native)
+GenericName=First-person shooter
+Comment=Native Linux port of Black (Xbox, 2006). Needs your own copy of the game.
+Comment[id]=Port native Linux untuk Black (Xbox, 2006). Butuh copy game milikmu sendiri.
+Exec=black-linux
+Icon=black-linux
+Terminal=false
+Categories=Game;ActionGame;
+Keywords=black;fps;shooter;xbox;recomp;
+StartupWMClass=black-linux
+Actions=Windowed;Rebuild;
+
+[Desktop Action Windowed]
+Name=Play in a window
+Name[id]=Main dalam jendela
+Exec=black-linux --windowed
+
+[Desktop Action Rebuild]
+Name=Rebuild from my game files
+Name[id]=Build ulang dari file game
+Exec=black-linux --rebuild

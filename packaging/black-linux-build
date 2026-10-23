@@ -1,0 +1,211 @@
+#!/bin/bash
+# black-linux-build: makes the native Linux executable of Black from YOUR OWN copy of the game.
+#
+# The package ships no game code: this recompiles the game's x86 code (default.xbe) to C++ with the XboxXBE-Recomp
+# recompiler, compiles that with clang, and links it with the prebuilt host (SDL3 + Vulkan) into
+#   ~/.local/share/black-linux/bin/BLACK
+# It runs once (the game's launcher starts it when needed); later starts go straight to the game.
+#
+#   black-linux-build [--gui] [--jobs N] [--force] [<game .iso or folder>]
+set -uo pipefail
+
+VERSION="@VERSION@"
+DATA="${BLACK_DATA_DIR:-/usr/share/black-linux}"
+LIB="${BLACK_LIB_DIR:-/usr/lib/black-linux}"
+HOME_DIR="${BLACK_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/black-linux}"
+WORK="${XDG_CACHE_HOME:-$HOME/.cache}/black-linux"
+EUROPE_SHA1="796ad8369354e48aa15644d4707dd70bd3bc3b4c"
+CXX="${CXX:-clang++}"
+MARCH="@MARCH@"
+
+GUI=0; JOBS=""; FORCE=0; SOURCE=""
+while (($#)); do
+    case "$1" in
+        --gui) GUI=1 ;;
+        --jobs) shift; JOBS="${1:-}" ;;
+        --force) FORCE=1 ;;
+        -h|--help) sed -n 2,10p "$0"; exit 0 ;;
+        *) SOURCE="$1" ;;
+    esac
+    shift
+done
+[[ $GUI == 1 ]] && ! command -v zenity >/dev/null 2>&1 && GUI=0
+
+say() { echo "  $*"; }
+fail() {
+    echo ""; echo "  GAGAL / FAILED: $*"; echo ""
+    [[ $GUI == 1 ]] && zenity --error --title="Black" --width=460 --text="$*" 2>/dev/null
+    exit 1
+}
+
+mkdir -p "$HOME_DIR/bin" "$HOME_DIR/game" "$WORK" || fail "cannot create $HOME_DIR or $WORK"
+LOG="$WORK/build.log"
+: > "$LOG"
+
+echo ""
+echo "  Black (Linux native) - build ${VERSION}"
+echo "  ========================================"
+
+# ------------------------------------------------------------------------------------------------ toolchain
+for t in "$CXX" ld.lld python3; do
+    command -v "$t" >/dev/null 2>&1 || fail "$t is missing: sudo apt install clang lld python3"
+done
+VK=""
+for f in /usr/lib/x86_64-linux-gnu/libvulkan.so.1 /usr/lib64/libvulkan.so.1 /usr/lib/libvulkan.so.1; do
+    [[ -e $f ]] && VK="$f" && break
+done
+[[ -n $VK ]] || fail "libvulkan.so.1 is missing: sudo apt install libvulkan1 mesa-vulkan-drivers"
+
+# ------------------------------------------------------------------------------------------------ the game
+# the first folder holding default.xbe or an .iso, the same places the game looks at
+find_game() {
+    local dirs=()
+    [[ -n ${BLACK_GAME_DIR:-} ]] && dirs+=("$BLACK_GAME_DIR")
+    dirs+=("$HOME_DIR/game" "$HOME_DIR/assets" "$HOME/Games/Black" "$HOME/Games/black")
+    for d in "${dirs[@]}"; do
+        [[ -d $d ]] || continue
+        for x in "$d"/default.xbe "$d"/DEFAULT.XBE "$d"/Default.xbe; do
+            [[ -f $x ]] && { echo "$x"; return 0; }
+        done
+        local iso
+        iso=$(find -L "$d" -maxdepth 1 -type f -iname '*.iso' 2>/dev/null | sort | head -n1)
+        [[ -n $iso ]] && { echo "$iso"; return 0; }
+    done
+    return 1
+}
+
+if [[ -n $SOURCE ]]; then
+    SOURCE=$(realpath "$SOURCE") || fail "$SOURCE does not exist"
+    if [[ -d $SOURCE ]]; then
+        [[ -f $SOURCE/default.xbe ]] || fail "$SOURCE has no default.xbe"
+        rmdir "$HOME_DIR/game" 2>/dev/null; [[ -e $HOME_DIR/game ]] || ln -s "$SOURCE" "$HOME_DIR/game"
+        SOURCE="$SOURCE/default.xbe"
+    else
+        ln -sf "$SOURCE" "$HOME_DIR/game/$(basename "$SOURCE")"
+    fi
+fi
+GAME_FILE="${SOURCE:-$(find_game || true)}"
+
+if [[ -z $GAME_FILE && $GUI == 1 ]]; then
+    zenity --info --title="Black" --width=480 --text="Pilih file game Black milikmu sendiri.\nChoose your own copy of Black:\n\n• the disc image (.iso), USA or Europe, or\n• default.xbe inside the extracted game folder." 2>/dev/null
+    PICK=$(zenity --file-selection --title="Black: the .iso or default.xbe" \
+           --file-filter="Black (*.iso, default.xbe) | *.iso *.ISO default.xbe DEFAULT.XBE" 2>/dev/null) || exit 1
+    if [[ ${PICK,,} == *.iso ]]; then
+        ln -sf "$PICK" "$HOME_DIR/game/$(basename "$PICK")"
+    else
+        rmdir "$HOME_DIR/game" 2>/dev/null; [[ -e $HOME_DIR/game ]] || ln -s "$(dirname "$PICK")" "$HOME_DIR/game"
+    fi
+    GAME_FILE="$PICK"
+fi
+[[ -n $GAME_FILE ]] || fail "No game files found. Put the .iso of your own copy of Black (or default.xbe with its folders) in:
+    $HOME_DIR/game
+and run black-linux-build again."
+say "game: $GAME_FILE"
+
+XBE="$WORK/default.xbe"
+if [[ ${GAME_FILE,,} == *.iso ]]; then
+    python3 -I "$DATA/tools/xdvdfs.py" "$GAME_FILE" default.xbe "$XBE.src" >>"$LOG" 2>&1 \
+        || fail "default.xbe could not be read from $GAME_FILE (not an Xbox disc image?)"
+else
+    cp -f "$GAME_FILE" "$XBE.src" || fail "cannot read $GAME_FILE"
+fi
+SHA=$(sha1sum "$XBE.src" | cut -d' ' -f1)
+if [[ $SHA == "$EUROPE_SHA1" ]]; then
+    say "release: Europe, converted to the USA xbe"
+    python3 -I "$DATA/tools/europe_to_usa.py" "$DATA/europe.patch" "$XBE.src" "$XBE" >>"$LOG" 2>&1 \
+        || fail "the Europe xbe could not be converted"
+else
+    mv -f "$XBE.src" "$XBE"
+fi
+rm -f "$XBE.src"
+IMAGE_SHA=$(sha1sum "$XBE" | cut -d' ' -f1)
+STAMP="$VERSION $IMAGE_SHA"
+if [[ $FORCE == 0 && -x $HOME_DIR/bin/BLACK && "$(cat "$HOME_DIR/bin/.stamp" 2>/dev/null)" == "$STAMP" ]]; then
+    say "already built for this copy and this version: $HOME_DIR/bin/BLACK"
+    exit 0
+fi
+
+# ------------------------------------------------------------------------------------------------ recompile
+# the generated code and its objects are kept, keyed by what makes them: the recompiler, the config, the runtime's
+# headers, the flags and the xbe. A package update that changes only the host just links again (a minute).
+FLAGS="-std=c++20 -O2 -w -fno-strict-aliasing -fsigned-char -march=$MARCH"
+KEY=$( { sha1sum "$LIB/xbe_recomp" "$DATA/config/game.toml"; find "$DATA/sdk" -type f -name '*.h' -o -name '*.toml' | sort | xargs sha1sum; echo "$FLAGS $IMAGE_SHA $($CXX --version | head -n1)"; } | sha1sum | cut -c1-12)
+GEN="$WORK/gen-$KEY"
+OBJ="$WORK/obj-$KEY"
+for d in "$WORK"/gen-* "$WORK"/obj-* "$WORK"/gen; do
+    [[ -e $d && $d != "$GEN" && $d != "$OBJ" ]] && rm -rf "$d"
+done
+say "[1/3] recompiling default.xbe to C++ ..."
+"$LIB/xbe_recomp" "$DATA/config/game.toml" "$XBE" "$GEN" --xdk "$DATA/sdk/xdk" >>"$LOG" 2>&1 \
+    || fail "the recompiler stopped. Is this the USA or Europe release of Black (Xbox)? See $LOG"
+cmp -s "$GEN/image_symbols.h" "$LIB/image_symbols.h" \
+    || fail "the recompiled image does not match this package's host (image_symbols.h differs). See $LOG"
+
+# ------------------------------------------------------------------------------------------------ compile
+SOURCES=("$GEN"/x86_func_mapping.cpp "$GEN"/x86_recomp.*.cpp)
+TOTAL=${#SOURCES[@]}
+if [[ -z $JOBS ]]; then
+    MEM_GB=$(awk '/MemAvailable/ {printf "%d", $2/1048576}' /proc/meminfo)
+    JOBS=$(( (MEM_GB - 1) / 2 )); (( JOBS < 1 )) && JOBS=1
+    (( JOBS > $(nproc) )) && JOBS=$(nproc)
+fi
+DONE=$(find "$OBJ" -name '*.o' 2>/dev/null | wc -l)
+if (( DONE >= TOTAL )); then
+    say "[2/3] the game's $TOTAL compiled parts are kept from before: linking only"
+else
+    say "[2/3] compiling $TOTAL parts with $JOBS jobs (30-90 minutes on a laptop; only this once) ..."
+fi
+mkdir -p "$OBJ"
+export CXX MARCH GEN OBJ DATA LOG FLAGS
+compile_one() {
+    local src="$1" o
+    o="$OBJ/$(basename "$src" .cpp).o"
+    [[ -f $o && $o -nt $src ]] && return 0
+    $CXX $FLAGS -I"$DATA/sdk/runtime" -I"$DATA/sdk/harness/compat" -I"$GEN" -c "$src" -o "$o.tmp" 2>>"$LOG" \
+        && mv -f "$o.tmp" "$o"
+}
+export -f compile_one
+
+progress() {
+    local done=0
+    while (( done < TOTAL )); do
+        done=$(find "$OBJ" -name '*.o' 2>/dev/null | wc -l)
+        echo $(( done * 100 / TOTAL ))
+        echo "# Compiling the game for your PC: $done / $TOTAL parts (only this once)"
+        sleep 3
+        kill -0 "$1" 2>/dev/null || break
+    done
+}
+
+printf '%s\n' "${SOURCES[@]}" | xargs -P "$JOBS" -I{} bash -c 'compile_one "$@"' _ {} &
+CPID=$!
+if [[ $GUI == 1 ]]; then
+    progress $CPID | zenity --progress --title="Black" --width=480 --auto-close --no-cancel \
+        --text="Compiling the game for your PC..." 2>/dev/null &
+    wait $CPID; RC=$?
+else
+    while kill -0 $CPID 2>/dev/null; do
+        n=$(find "$OBJ" -name '*.o' 2>/dev/null | wc -l)
+        printf '\r      %d / %d parts' "$n" "$TOTAL"
+        sleep 5
+    done
+    wait $CPID; RC=$?
+    echo ""
+fi
+(( RC == 0 )) || fail "compiling failed (out of memory? try: black-linux-build --jobs 1). See $LOG"
+
+# ------------------------------------------------------------------------------------------------ link
+say "[3/3] linking ..."
+echo "extern const char kImageSha1[] = \"$IMAGE_SHA\";" > "$WORK/image_sha1.cpp"
+$CXX $FLAGS -c "$WORK/image_sha1.cpp" -o "$WORK/image_sha1.o" 2>>"$LOG" || fail "see $LOG"
+OBJS=("$OBJ"/x86_func_mapping.o)
+for s in "${SOURCES[@]:1}"; do OBJS+=("$OBJ/$(basename "$s" .cpp).o"); done
+$CXX -fuse-ld=lld -o "$HOME_DIR/bin/BLACK.new" "${OBJS[@]}" "$WORK/image_sha1.o" \
+    -Wl,--whole-archive "$LIB/libblack_host.a" -Wl,--no-whole-archive \
+    -Wl,--start-group $(cat "$LIB/link-libs.txt" | sed "s|^|$LIB/|") -Wl,--end-group \
+    "$VK" -lpthread -ldl -lm -lrt >>"$LOG" 2>&1 || fail "linking failed. See $LOG"
+mv -f "$HOME_DIR/bin/BLACK.new" "$HOME_DIR/bin/BLACK"
+echo "$STAMP" > "$HOME_DIR/bin/.stamp"
+say "done: $HOME_DIR/bin/BLACK"
+[[ $GUI == 1 ]] && zenity --info --title="Black" --width=380 --text="Selesai! The game is ready.\nIt starts now." 2>/dev/null &
+exit 0

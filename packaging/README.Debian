@@ -1,0 +1,38 @@
+Black (Linux native) - black-linux
+==================================
+
+An unofficial native Linux port of the original Xbox version of Black (2006),
+made by static recompilation with XboxXBE-Recomp (TGP482), using the
+game hooks, sound and Vulkan renderer of Black for Android (Rangga Casper).
+No emulator, no Wine/Proton, no Electron, no web engine.
+
+This package contains NO game code and NO game assets.
+
+FIRST START
+  1. Put YOUR OWN copy of the game (USA or Europe) in
+         ~/.local/share/black-linux/game/
+     either the disc image (.iso) or default.xbe with its folders.
+     (Or just start the game: it asks you to pick the .iso.)
+  2. Start "Black (Linux Native)" from the menu, or run:  black-linux
+  3. The first start compiles the game for your PC: 30-90 minutes, once.
+     In a terminal you can watch it:  black-linux-build
+
+PLAYING
+  F11 or Alt+Enter   fullscreen / window
+  Esc / the game's   options: Graphics, Mouse and Keyboard, General ...
+  black-linux --windowed     start in a window
+  black-linux --rebuild      build again (e.g. after changing the game files)
+
+FILES
+  ~/.local/share/black-linux/          settings (black.toml), saves (hdd),
+                                       logs, built game (bin/BLACK)
+  ~/.cache/black-linux/build.log       the build's log
+
+LOW-END LAPTOPS (Intel HD 520/620)
+  Graphics > Render Resolution 67-100%, MSAA/SMAA off, Ambient Occlusion off,
+  V-Sync on. Check Vulkan works:  vulkaninfo --summary
+
+TROUBLESHOOTING
+  - "compiling failed": low memory; run  black-linux-build --jobs 1
+  - no picture / crash at start: sudo apt install mesa-vulkan-drivers, update
+    Mesa, and see ~/.local/share/black-linux/logs
