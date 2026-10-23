@@ -33,7 +33,7 @@ done
 
 say() { echo "  $*"; }
 fail() {
-    echo ""; echo "  GAGAL / FAILED: $*"; echo ""
+    echo ""; echo "  FAILED: $*"; echo ""
     [[ $GUI == 1 ]] && zenity --error --title="Black" --width=460 --text="$*" 2>/dev/null
     exit 1
 }
@@ -87,7 +87,7 @@ fi
 GAME_FILE="${SOURCE:-$(find_game || true)}"
 
 if [[ -z $GAME_FILE && $GUI == 1 ]]; then
-    zenity --info --title="Black" --width=480 --text="Pilih file game Black milikmu sendiri.\nChoose your own copy of Black:\n\n• the disc image (.iso), USA or Europe, or\n• default.xbe inside the extracted game folder." 2>/dev/null
+    zenity --info --title="Black" --width=480 --text="Choose your own copy of Black:\n\n• the disc image (.iso), USA or Europe, or\n• default.xbe inside the extracted game folder." 2>/dev/null
     PICK=$(zenity --file-selection --title="Black: the .iso or default.xbe" \
            --file-filter="Black (*.iso, default.xbe) | *.iso *.ISO default.xbe DEFAULT.XBE" 2>/dev/null) || exit 1
     if [[ ${PICK,,} == *.iso ]]; then
@@ -207,5 +207,5 @@ $CXX -fuse-ld=lld -o "$HOME_DIR/bin/BLACK.new" "${OBJS[@]}" "$WORK/image_sha1.o"
 mv -f "$HOME_DIR/bin/BLACK.new" "$HOME_DIR/bin/BLACK"
 echo "$STAMP" > "$HOME_DIR/bin/.stamp"
 say "done: $HOME_DIR/bin/BLACK"
-[[ $GUI == 1 ]] && zenity --info --title="Black" --width=380 --text="Selesai! The game is ready.\nIt starts now." 2>/dev/null &
+[[ $GUI == 1 ]] && zenity --info --title="Black" --width=380 --text="The game is ready.\nIt starts now." 2>/dev/null &
 exit 0

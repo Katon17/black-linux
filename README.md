@@ -1,148 +1,166 @@
-# Black (Xbox, 2006) — Port Native Linux untuk Linux Mint 22.3
+# Black (Xbox, 2006) — Native Linux Port
 
-Port **native Linux x86_64** untuk *Black* versi Xbox original. Dibuat dengan **static recompilation**: kode x86 game diterjemahkan ke C++, lalu dikompilasi jadi program Linux biasa (ELF).
+**English** | [Bahasa Indonesia](README.id.md)
 
-**Bukan** emulator, **bukan** Wine/Proton, **bukan** Electron atau web engine. Grafisnya pakai **Vulkan** (Mesa ANV untuk Intel HD 620), sedangkan window, audio, keyboard, mouse, dan controller lewat **SDL3**.
+A **native Linux x86_64** port of the original Xbox version of *Black*, built using **static recompilation**: the game's x86 code is translated into C++ and compiled into a native Linux executable (ELF).
 
-> ⚠️ **Paket ini TIDAK berisi kode game maupun aset game.** Kamu harus pakai copy game milikmu sendiri (USA atau Europe), entah file `.iso` atau folder hasil ekstrak yang berisi `default.xbe`. Black adalah © Criterion Games / Electronic Arts. Ini proyek tidak resmi.
+This is **not** an emulator, Wine/Proton, Electron, or a web engine. Graphics use **Vulkan**, while **SDL3** handles the window, audio, keyboard, mouse, and controllers.
 
-**Download:** ambil `black-linux_<versi>_amd64.deb` di halaman [Releases](https://github.com/Katon17/black-linux/releases).
+> ⚠️ **This package contains NO game code or game assets.** You must provide your own copy of the game (USA or Europe), either as an `.iso` or an extracted folder containing `default.xbe`. Black is © Criterion Games / Electronic Arts. This is an unofficial project.
 
-**Diuji:** ThinkPad X270 (i5 gen 7, Intel HD 620, 8 GB RAM, Linux Mint 22.3 XFCE) dengan grafik rata kanan: **90–100+ FPS**.
+**Download:** get `black-linux_<version>_amd64.deb` from [Releases](https://github.com/Katon17/black-linux/releases).
+
+**Target platforms:** Ubuntu 24.04 / Linux Mint 22.x (x86_64).
+
+**Reported test results:** ThinkPad X270 (7th-gen i5, Intel HD 620, 8 GB RAM, Linux Mint 22.3 XFCE), with graphics settings at maximum: **90–100+ FPS**. Performance on other hardware may vary.
 
 ---
 
-## 1. Install (di ThinkPad X270)
+## 1. Install
+
+Download the `.deb` from Releases, then run:
 
 ```bash
-# download .deb dari halaman Releases dulu
 sudo apt install ./black-linux_0.1.2_amd64.deb
 ```
 
-`apt` otomatis menginstal dependensi yang dibutuhkan: `clang`, `lld`, `libvulkan1`, `mesa-vulkan-drivers`, `python3`, dan `zenity`. Totalnya sekitar 150–250 MB.
+`apt` automatically installs the required dependencies, including `clang`, `lld`, `libvulkan1`, `mesa-vulkan-drivers`, `python3`, and `zenity`. Expect approximately 150–250 MB of dependencies.
 
-Sebelum mulai, cek dulu apakah Vulkan sudah jalan:
+Before starting, check that Vulkan works:
+
 ```bash
 sudo apt install vulkan-tools
 vulkaninfo --summary | grep -i "deviceName\|apiVersion"
-# harus muncul: Intel(R) HD Graphics 620 (KBL GT2) ... apiVersion 1.3.x
+# On an Intel HD 620, expect Intel(R) HD Graphics 620 (KBL GT2) and apiVersion 1.3.x.
 ```
 
-## 2. Taruh file game
+## 2. Add your game files
 
-Taruh copy milikmu sendiri di folder ini:
-```
+Place your own copy in:
+
+```text
 ~/.local/share/black-linux/game/
-    Black.iso                    ← file disc image (USA atau Europe), ATAU
-    default.xbe + folder-foldernya (hasil ekstrak)
+    Black.iso                    # Disc image (USA or Europe), OR
+    default.xbe + its folders     # Extracted game files
 ```
-Kalau folder itu kosong, game akan membuka dialog untuk memilih file `.iso`-nya.
 
-## 3. Jalankan pertama kali
+If this directory is empty, the launcher opens a dialog to select your `.iso` file.
 
-Buka menu, lalu **Games → Black (Linux Native)**. Atau lewat terminal (supaya progresnya kelihatan):
+## 3. First launch
+
+Open **Games → Black (Linux Native)** from your application menu, or use a terminal to see progress:
+
 ```bash
-black-linux-build      # build saja, ada progres
-black-linux            # main
+black-linux-build      # Build only, with progress output
+black-linux            # Play
 ```
 
-Start pertama akan **mengompilasi game khusus untuk PC-mu**:
-1. `default.xbe` direcompile ke C++ (64 bagian).
-2. Hasilnya dikompilasi dengan clang. **Di X270 perkiraannya 30–90 menit, dan cuma sekali.**
-3. Semuanya di-link jadi `~/.local/share/black-linux/bin/BLACK`.
+The first launch **compiles the game for your PC**:
 
-Setelah itu, setiap kali main game langsung jalan.
+1. `default.xbe` is recompiled into C++ (64 parts).
+2. The generated code is compiled with clang. **On an X270, this is estimated to take 30–90 minutes, once.**
+3. Everything is linked into `~/.local/share/black-linux/bin/BLACK`.
 
-## 4. Kontrol dan pengaturan
+Subsequent launches start the game directly.
 
-| Tombol / perintah | Fungsi |
+## 4. Controls and settings
+
+| Key / command | Action |
 |---|---|
-| `F11` atau `Alt+Enter` | Ganti antara fullscreen dan jendela |
-| Menu Options di dalam game | Graphics, Controller (deadzone/sensitivitas stik), General, Mouse and Keyboard (bisa rebind), Cheats |
-| `F10` | Panel setting overlay |
-| `BLACK_TOUCH=1 black-linux` | Paksa tampilkan tombol sentuh (hanya untuk laptop layar sentuh) |
-| `BLACK_GPU=nvidia black-linux` | Pilih GPU tertentu berdasarkan namanya |
-| `black-linux --windowed` | Mulai dalam mode jendela |
-| `black-linux --rebuild` | Build ulang |
+| `F11` or `Alt+Enter` | Toggle fullscreen / windowed mode |
+| In-game Options menu | Graphics, Controller (stick deadzone/sensitivity), General, Mouse and Keyboard (rebindable), Cheats |
+| `F10` | Settings overlay |
+| `BLACK_TOUCH=1 black-linux` | Force touch controls to appear (for touchscreen laptops) |
+| `BLACK_GPU=nvidia black-linux` | Select a GPU by name |
+| `black-linux --windowed` | Start in a window |
+| `black-linux --rebuild` | Rebuild the game |
 
-**Setting yang disarankan untuk Intel HD 620:**
-- Render Resolution: 100% di layar 1366×768, atau sekitar 67% di layar 1080p. Nilai ini sudah otomatis diatur saat start pertama.
+**Recommended settings for Intel HD 620:**
+
+- Render Resolution: 100% on a 1366×768 display, or approximately 67% at 1080p. This is set automatically on first launch.
 - MSAA/SMAA: off.
 - Ambient Occlusion: off.
 - Draw Distance: 1x.
 - V-Sync: on (default).
 
-## 5. Lokasi file
+## 5. File locations
 
-| Path | Isi |
+| Path | Contents |
 |---|---|
-| `~/.local/share/black-linux/black.toml` | Pengaturan |
-| `~/.local/share/black-linux/hdd/` | Save game |
-| `~/.local/share/black-linux/logs/` | Log, dibutuhkan kalau ada error |
-| `~/.local/share/black-linux/bin/BLACK` | Game yang sudah di-build |
-| `~/.cache/black-linux/build.log` | Log proses build |
+| `~/.local/share/black-linux/black.toml` | Settings |
+| `~/.local/share/black-linux/hdd/` | Saved games |
+| `~/.local/share/black-linux/logs/` | Logs for troubleshooting |
+| `~/.local/share/black-linux/bin/BLACK` | Compiled game executable |
+| `~/.cache/black-linux/build.log` | Build log |
 
 ## 6. Troubleshooting
 
-| Masalah | Solusi |
+| Problem | Suggested solution |
 |---|---|
-| `compiling failed` | Kemungkinan RAM habis. Jalankan `black-linux-build --jobs 1` (lebih lambat tapi hemat RAM). |
-| `the recompiler stopped` | Bukan rilis USA/Europe, atau file ISO rusak. Cek `build.log`. |
-| Layar hitam atau crash saat start | `sudo apt install --reinstall mesa-vulkan-drivers`, lalu kirim isi `logs/`. |
-| Muncul tombol sentuh Android di layar | Sudah diperbaiki di 0.1.2. Update `.deb`, lalu jalankan `black-linux-build` (cuma link ulang, sekitar 1 menit). |
-| Muncul peringatan "different release" | Copy game-nya beda versi dan kemungkinan besar crash. |
+| `compiling failed` | You may have run out of memory. Run `black-linux-build --jobs 1` (slower, but uses less RAM). |
+| `the recompiler stopped` | The game may not be a USA/Europe release, or the ISO may be damaged. Check `build.log`. |
+| Black screen or crash at startup | Try `sudo apt install --reinstall mesa-vulkan-drivers`, then include the contents of `logs/` when reporting the issue. |
+| Android touch controls appear on screen | Fixed in 0.1.2. Update the `.deb`, then run `black-linux-build` (only relinks, approximately one minute). |
+| A "different release" warning appears | Your game copy is a different version and will likely crash. |
 
 ---
 
-## Cara kerja (untuk yang penasaran)
+## How it works
 
-```
- PAKET .deb (tanpa kode game)                     DI LAPTOPMU (sekali)
- ┌──────────────────────────────┐   default.xbe  ┌────────────────────────────────┐
- │ xbe_recomp  (recompiler)     │ ─────────────▶ │ 64 file C++ hasil recompile    │
- │ libblack_host.a:             │                │        │ clang -O2              │
- │  - runtime XboxXBE-Recomp    │                │        ▼                        │
- │    (kernel Xbox, D3D8, DSnd) │   link         │ objek game  +  host  =  BLACK   │
- │  - hooks/sound/D3D8 game     │ ─────────────▶ │ (ELF x86_64 native, Vulkan)     │
- │  - host desktop SDL3+Vulkan  │                └────────────────────────────────┘
+```text
+ .deb PACKAGE (no game code)                    ON YOUR PC (once)
+ ┌──────────────────────────────┐  default.xbe  ┌────────────────────────────────┐
+ │ xbe_recomp (recompiler)      │ ─────────────▶ │ 64 generated C++ files         │
+ │ libblack_host.a:             │               │        │ clang -O2              │
+ │  - XboxXBE-Recomp runtime    │               │        ▼                        │
+ │    (Xbox kernel, D3D8, DSnd) │   link        │ game objects + host = BLACK    │
+ │  - game hooks/sound/D3D8     │ ─────────────▶ │ (native x86_64 ELF, Vulkan)     │
+ │  - SDL3+Vulkan desktop host  │               └────────────────────────────────┘
  │ libSDL3.a, libglslang.a      │
  └──────────────────────────────┘
 ```
 
-Proyek ini dibangun di atas:
-- **XboxXBE-Recomp SDK** oleh TGP482 (MIT): recompiler dan runtime portable. Dipin di commit `99078b1`.
-- **Black for Android** oleh RanggaCasper (MIT): `src/` (hooks, sound, D3D8) dan renderer Vulkan. Folder `desktop/` adalah host Android yang diadaptasi ke desktop Linux.
+This project builds on:
 
-### Apa yang diubah untuk desktop Linux
-- `desktop/main.cpp`: window desktop (fullscreen/jendela, F11), folder data XDG, info sistem dari `/proc`, default yang cocok untuk laptop.
-- `desktop/game_files.cpp`: mencari game di `~/.local/share/black-linux/game`, `~/Games/Black`, atau `$BLACK_GAME_DIR`. Semua bagian JNI/Android dihapus.
-- `desktop/input.cpp`, `update.cpp`, `touch.cpp`: bagian JNI dihapus, dan path skin diarahkan ke `/usr/share`.
-- `desktop/vulkan.cpp`: surface Vulkan tidak lagi butuh window Android (sumber crash `renderer init failed` di 0.1.0), dan GPU dipilih otomatis: diskrit, lalu terintegrasi.
-- `desktop/touch.cpp`: tombol sentuh disembunyikan dan mode awal pakai keyboard/mouse. Overlay baru muncul kalau layar sentuh benar-benar disentuh.
-- `src/common/menu.cpp`: halaman Touch/Gyro diganti halaman Controller, dan menu "Check for updates" (khusus Android) dihapus.
-- `src/d3d/render_thread.cpp`: perbandingan state yang tadinya pakai NEON (ARM) diberi versi **SSE2** untuk x86_64.
-- `sdk/tools/recomp/main.cpp`: mode `XBE_HEADER_ONLY`, supaya host bisa di-build tanpa file game.
+- **XboxXBE-Recomp SDK** by TGP482 (MIT): portable recompiler and runtime, pinned to commit `99078b1`.
+- **Black for Android** by RanggaCasper (MIT): `src/` (hooks, sound, D3D8) and the Vulkan renderer. The `desktop/` directory adapts the Android host for Linux desktop use.
 
-### Build .deb sendiri dari source (tanpa file game)
+### Desktop Linux changes
+
+- `desktop/main.cpp`: desktop window (fullscreen/windowed, F11), XDG data directories, system information from `/proc`, and laptop-friendly defaults.
+- `desktop/game_files.cpp`: finds the game in `~/.local/share/black-linux/game`, `~/Games/Black`, or `$BLACK_GAME_DIR`. JNI/Android code removed.
+- `desktop/input.cpp`, `update.cpp`, `touch.cpp`: JNI code removed; skin paths point to `/usr/share`.
+- `desktop/vulkan.cpp`: Vulkan surfaces no longer require an Android window (the cause of the `renderer init failed` crash in 0.1.0). Automatic GPU selection prefers discrete, then integrated GPUs.
+- `desktop/touch.cpp`: touch controls are hidden by default; keyboard/mouse is the initial input mode. The overlay appears when the touchscreen is actually used.
+- `src/common/menu.cpp`: Touch/Gyro pages replaced with Controller; Android-only "Check for updates" menu removed.
+- `src/d3d/render_thread.cpp`: **SSE2** implementation for x86_64 added for state comparisons previously using ARM NEON.
+- `sdk/tools/recomp/main.cpp`: `XBE_HEADER_ONLY` mode allows building the host without game files.
+
+### Build the .deb from source (no game files required)
+
+On Ubuntu 24.04 / Linux Mint 22.x (x86_64):
+
 ```bash
 ./build-from-source.sh
 sudo apt install ./release/black-linux_*.deb
 ```
 
-## Status pengujian (versi 0.1.2)
+## Test status (version 0.1.2)
 
-| Bagian | Status |
+The following results are recorded for the project; they do not imply testing on all hardware.
+
+| Component | Status |
 |---|---|
-| Recompile dengan ISO asli (USA, sha1 `82d05881…`) di ThinkPad X270 | ✅ |
-| Renderer Vulkan di Intel HD 620 | ✅ lancar (sejak 0.1.1) |
-| Tombol sentuh Android tidak muncul di laptop | ✅ 0.1.2 |
-| Update host tanpa compile ulang penuh (cache objek) | ✅ sejak 0.1.1 |
+| Recompilation from an original USA ISO (SHA-1 `82d05881…`) on ThinkPad X270 | ✅ |
+| Vulkan renderer on Intel HD 620 | ✅ Running smoothly since 0.1.1 |
+| Android touch controls hidden on laptops | ✅ 0.1.2 |
+| Host updates without a full recompile (object cache) | ✅ Since 0.1.1 |
 
-## Kredit
+## Credits
 
-- **XboxXBE-Recomp SDK** oleh TGP482 (MIT): `sdk/`.
-- **Black for Android** oleh Rangga Casper (MIT): `src/`, `desktop/`, `config/`, `data/`.
-- Library pihak ketiga (SDL3, Dear ImGui, glslang, Zydis, toml++) diunduh saat build. Lihat `sdk/THIRD_PARTY.txt`.
-- Port desktop Linux dan paket `.deb`: **Katon17**.
+- **XboxXBE-Recomp SDK** by TGP482 (MIT): `sdk/`.
+- **Black for Android** by Rangga Casper (MIT): `src/`, `desktop/`, `config/`, `data/`.
+- Third-party libraries (SDL3, Dear ImGui, glslang, Zydis, toml++) are downloaded during the build. See `sdk/THIRD_PARTY.txt`.
+- Linux desktop port and `.deb` packaging: **Katon17**.
 
-Lisensi: MIT (lihat `LICENSE`).
+License: MIT (see `LICENSE`).
