@@ -10,7 +10,44 @@ Port **native Linux x86_64** untuk *Black* versi Xbox original. Dibuat dengan **
 
 **Download:** ambil `black-linux_<versi>_amd64.deb` di halaman [Releases](https://github.com/Katon17/black-linux/releases).
 
-**Diuji:** ThinkPad X270 (i5 gen 7, Intel HD 620, 8 GB RAM, Linux Mint 22.3 XFCE) dengan grafik rata kanan: **90–100+ FPS**.
+## Benchmark
+
+*Dilaporkan oleh penguji pada perangkat miliknya; performa di perangkat lain bisa berbeda. Rentang performa berikut merupakan pengamatan, bukan hasil perekaman frame time atau rata-rata terukur.*
+
+| Bagian | Detail |
+|---|---|
+| Laptop | Lenovo ThinkPad X270 |
+| CPU / GPU | Intel Core i7-7600U / Intel HD Graphics 620 |
+| RAM | 8 GB, **single-channel** |
+| OS | Linux Mint 22.3 XFCE, X11 |
+| Kernel / Mesa | `7.0.0-38-generic` / `25.2.8` |
+| Resolusi | 1280×720, render 100% |
+| Pengaturan | V-Sync off; max FPS: **Unlimited**; FXAA; bloom, fog, dan HDR on; anisotropic filtering dan draw distance sesuai default game; reload blur off |
+| Scene pengujian | Mission 1; bagian terberat yang dilaporkan adalah ruangan bata berjendela besar yang terkena cahaya matahari |
+| Performa yang diamati | Stabil **80–100 FPS** selama tiga misi pertama |
+| Bacaan sesaat | **98.1 FPS** menghadap jendela terang; **139.0 FPS** menghadap pintu |
+
+### Gameplay di Linux Mint XFCE
+
+![Ruangan bata bercahaya matahari di Mission 1 pada 1280×720, menunjukkan 98.1 FPS di Intel HD 620](docs/benchmarks/mission-1-sunlit-room.png)
+
+*Mission 1, menghadap jendela yang terkena cahaya matahari: 98.1 FPS saat screenshot diambil.*
+
+[Screenshot gameplay kedua: menghadap pintu, 139.0 FPS](docs/benchmarks/mission-1-door.png).
+Angka ini merupakan bacaan sesaat, bukan FPS rata-rata atau hasil minimum/maksimum sepanjang pengujian.
+
+<details>
+<summary>Spesifikasi sistem dan pengaturan grafis pengujian</summary>
+
+![Informasi sistem ThinkPad X270 di Linux Mint 22.3 XFCE](docs/benchmarks/thinkpad-x270-system.png)
+
+![Pengaturan display: 1280×720 dengan render 100%, V-Sync off](docs/benchmarks/graphics-display.png)
+
+![Pengaturan kualitas: FXAA, bloom, fog dan HDR on; reload blur off; anisotropic filtering dan draw distance default](docs/benchmarks/graphics-quality.png)
+
+Screenshot sistem dan pengaturan mendokumentasikan konfigurasi yang terlihat. RAM single-channel, versi Mesa, FPS Unlimited, dan performa selama tiga misi merupakan laporan penguji. FPS yang terlihat di menu pengaturan **bukan** performa gameplay.
+
+</details>
 
 ---
 
