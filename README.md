@@ -12,7 +12,44 @@ This is **not** an emulator, Wine/Proton, Electron, or a web engine. Graphics us
 
 **Target platforms:** Ubuntu 24.04 / Linux Mint 22.x (x86_64).
 
-**Reported test results:** ThinkPad X270 (7th-gen i5, Intel HD 620, 8 GB RAM, Linux Mint 22.3 XFCE), with graphics settings at maximum: **90–100+ FPS**. Performance on other hardware may vary.
+## Benchmark
+
+*Reported by the tester on their own hardware; performance may vary. The sustained range below is an observation, not a frame-time capture or a measured average.*
+
+| Item | Details |
+|---|---|
+| Laptop | Lenovo ThinkPad X270 |
+| CPU / GPU | Intel Core i7-7600U / Intel HD Graphics 620 |
+| RAM | 8 GB, **single-channel** |
+| OS | Linux Mint 22.3 XFCE, X11 |
+| Kernel / Mesa | `7.0.0-38-generic` / `25.2.8` |
+| Resolution | 1280×720, 100% render scale |
+| Settings | V-Sync off; maximum FPS: **Unlimited**; FXAA; bloom, fog, and HDR on; anisotropic filtering and draw distance at game defaults; reload blur off |
+| Test scene | Mission 1; the most demanding area reported was the sunlit brick room with large windows |
+| Observed performance | Stable **80–100 FPS** during the first three missions |
+| Instantaneous readings | **98.1 FPS** facing the bright windows; **139.0 FPS** facing the door |
+
+### Gameplay on Linux Mint XFCE
+
+![Mission 1 sunlit brick room at 1280×720, showing 98.1 FPS on Intel HD 620](docs/benchmarks/mission-1-sunlit-room.png)
+
+*Mission 1, facing the sunlit windows: 98.1 FPS at the moment of capture.*
+
+[Second gameplay screenshot: facing the door, 139.0 FPS](docs/benchmarks/mission-1-door.png).
+These are instantaneous readings, not average FPS or minimum/maximum results for a full run.
+
+<details>
+<summary>Test system and graphics settings</summary>
+
+![ThinkPad X270 system information on Linux Mint 22.3 XFCE](docs/benchmarks/thinkpad-x270-system.png)
+
+![Display settings: 1280×720 at 100% render scale, V-Sync off](docs/benchmarks/graphics-display.png)
+
+![Quality settings: FXAA, bloom, fog and HDR on; reload blur off; default anisotropic filtering and draw distance](docs/benchmarks/graphics-quality.png)
+
+The system and settings screenshots document the visible configuration. Single-channel RAM, Mesa version, Unlimited FPS, and performance across three missions were reported by the tester. FPS shown in the settings menu is **not** gameplay performance.
+
+</details>
 
 ---
 
