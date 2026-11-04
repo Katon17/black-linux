@@ -91,6 +91,7 @@ constexpr Entry kEntries[] = {
     {"CONTRIBUTORS", {u"Contributeurs", u"Mitwirkende", u"Collaboratori", u"Colaboradores", u"Kontributor"}},
     {"BUILT WITH", {u"Réalisé avec", u"Erstellt mit", u"Realizzato con", u"Hecho con", u"Dibuat dengan"}},
     {"LINKS", {u"Liens", u"Links", u"Link", u"Enlaces", u"Tautan"}},
+    {"LINUX PORT", {u"Portage Linux", u"Linux-Portierung", u"Port Linux", u"Port de Linux", u"Port Linux"}},
     {"ANDROID PORT", {u"Portage Android", u"Android-Portierung", u"Port Android", u"Port de Android", u"Port Android"}},
     {"ANY WEAPON IN ANY LEVEL", {u"Toute arme dans tout niveau", u"Jede Waffe in jedem Level", u"Ogni arma in ogni livello", u"Cualquier arma en cualquier nivel", u"Senjata apa pun di level mana pun"}},
     {"BUTTON SKIN", {u"Apparence des boutons", u"Tasten-Design", u"Aspetto dei pulsanti", u"Diseño de botones", u"Skin tombol"}},

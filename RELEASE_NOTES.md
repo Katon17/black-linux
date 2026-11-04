@@ -1,4 +1,4 @@
-## black-linux 0.1.2
+## black-linux 0.1.3
 
 A **native Linux** port of *Black* (Xbox, 2006): static recompilation → x86_64 ELF, Vulkan + SDL3. Not an emulator or Wine.
 
@@ -8,8 +8,10 @@ A **native Linux** port of *Black* (Xbox, 2006): static recompilation → x86_64
 
 ### Install (Ubuntu 24.04 / Linux Mint 22.x)
 
+> ⚠️ **You need your own original copy of the game.** This `.deb` contains no game code or data.
+
 ```bash
-sudo apt install ./black-linux_0.1.2_amd64.deb
+sudo apt install ./black-linux_0.1.3_amd64.deb
 mkdir -p ~/.local/share/black-linux/game
 cp Black.iso ~/.local/share/black-linux/game/
 black-linux-build    # One-time build, approximately 30–90 minutes
@@ -18,6 +20,7 @@ black-linux
 
 ### Changes
 
+- 0.1.3: the title menu watermark reads "Black Linux"; Credits list **Katon Bagaskoro: Linux Port** first and link to this project's YouTube, GitHub, Saweria and Ko-fi pages. Updating from 0.1.1/0.1.2 only relinks (about one minute), no full recompile.
 - 0.1.2: hide Android touch controls on desktop, default to keyboard/mouse input, replace the Touch page with Controller, and remove the "Check for updates" menu.
 - 0.1.1: fix the `renderer init failed` crash (Vulkan surfaces no longer require an Android window), automatically select a GPU (`BLACK_GPU=` overrides this), and cache object files so host updates only require relinking.
 

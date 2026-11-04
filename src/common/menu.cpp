@@ -315,6 +315,7 @@ struct Credit {
 };
 constexpr Credit kCredits[] = {
     {"CONTRIBUTORS", nullptr, nullptr},
+    {"KATON BAGASKORO", "LINUX PORT", nullptr},
     {"RANGGACASPER", "ANDROID PORT", nullptr},
     {"DATFOOLDIVE", "ANY WEAPON IN ANY LEVEL", nullptr},
     {"BAGASROMADON", "BUTTON SKIN", nullptr},
@@ -325,9 +326,10 @@ constexpr Credit kCredits[] = {
     {"DEAR IMGUI", "LIBRARY", nullptr},
     {"XEMU, CXBX-RELOADED", "REFERENCES", nullptr},
     {"LINKS", nullptr, nullptr},
-    {"YOUTUBE", "OPEN", "https://youtube.com/c/@RanggaCasper"},
-    {"GITHUB", "OPEN", "https://github.com/RanggaCasper"},
-    {"SUPPORT", "OPEN", "https://sociabuzz.com/racas/tribe"},
+    {"YOUTUBE", "OPEN", "https://www.youtube.com/@KabakoNT"},
+    {"GITHUB", "OPEN", "https://github.com/Katon17/black-linux"},
+    {"SUPPORT (SAWERIA)", "OPEN", "https://saweria.co/Kabako"},
+    {"SUPPORT (KO-FI)", "OPEN", "https://ko-fi.com/katonbagaskoro"},
 };
 
 const std::vector<Row>& CreditRows() {

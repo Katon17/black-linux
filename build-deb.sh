@@ -58,13 +58,13 @@ cat > "$PKG/DEBIAN/control" <<EOF
 Package: black-linux
 Version: $VERSION
 Architecture: amd64
-Maintainer: black-linux packager <noreply@example.invalid>
+Maintainer: Katon Bagaskoro <Katon17@users.noreply.github.com>
 Installed-Size: $SIZE
 Depends: libc6 (>= 2.38), libstdc++6, libgcc-s1, libvulkan1, mesa-vulkan-drivers | vulkan-icd, clang, lld, libc6-dev, libstdc++-13-dev | libstdc++-dev, python3, zenity
 Recommends: vulkan-tools
 Section: games
 Priority: optional
-Homepage: https://github.com/RanggaCasper/Black-Android
+Homepage: https://github.com/Katon17/black-linux
 Description: Black (Xbox, 2006) as a native Linux game - bring your own copy
  An unofficial native Linux (x86_64) port of the original Xbox version of
  Black, made by static recompilation (XboxXBE-Recomp): no emulator, no

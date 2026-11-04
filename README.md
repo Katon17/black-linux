@@ -55,10 +55,12 @@ The system and settings screenshots document the visible configuration. Single-c
 
 ## 1. Install
 
+> ⚠️ **You need your own original copy of the game.** The `.deb` only contains the recompiler, runtime and launcher. **It includes no game code or data**, and nothing can be played without your own `.iso` or `default.xbe` (see step 2).
+
 Download the `.deb` from Releases, then run:
 
 ```bash
-sudo apt install ./black-linux_0.1.2_amd64.deb
+sudo apt install ./black-linux_0.1.3_amd64.deb
 ```
 
 `apt` automatically installs the required dependencies, including `clang`, `lld`, `libvulkan1`, `mesa-vulkan-drivers`, `python3`, and `zenity`. Expect approximately 150–250 MB of dependencies.
@@ -138,6 +140,7 @@ Subsequent launches start the game directly.
 | `the recompiler stopped` | The game may not be a USA/Europe release, or the ISO may be damaged. Check `build.log`. |
 | Black screen or crash at startup | Try `sudo apt install --reinstall mesa-vulkan-drivers`, then include the contents of `logs/` when reporting the issue. |
 | Android touch controls appear on screen | Fixed in 0.1.2. Update the `.deb`, then run `black-linux-build` (only relinks, approximately one minute). |
+| `error: quit: ConfirmWarning, FEAudio failed` in the log | Harmless: the quit confirmation dialog could not borrow the title menu's click sounds. The game is unaffected; `Exit (0)` means a normal exit. |
 | A "different release" warning appears | Your game copy is a different version and will likely crash. |
 
 ---
@@ -169,7 +172,8 @@ This project builds on:
 - `desktop/input.cpp`, `update.cpp`, `touch.cpp`: JNI code removed; skin paths point to `/usr/share`.
 - `desktop/vulkan.cpp`: Vulkan surfaces no longer require an Android window (the cause of the `renderer init failed` crash in 0.1.0). Automatic GPU selection prefers discrete, then integrated GPUs.
 - `desktop/touch.cpp`: touch controls are hidden by default; keyboard/mouse is the initial input mode. The overlay appears when the touchscreen is actually used.
-- `src/common/menu.cpp`: Touch/Gyro pages replaced with Controller; Android-only "Check for updates" menu removed.
+- `src/common/menu.cpp`: Touch/Gyro pages replaced with Controller; Android-only "Check for updates" menu removed. Credits list the Linux port and link to this project (YouTube, GitHub, Saweria, Ko-fi).
+- `src/game/fps_counter.cpp`: the title menu watermark reads "Black Linux".
 - `src/d3d/render_thread.cpp`: **SSE2** implementation for x86_64 added for state comparisons previously using ARM NEON.
 - `sdk/tools/recomp/main.cpp`: `XBE_HEADER_ONLY` mode allows building the host without game files.
 
@@ -182,7 +186,7 @@ On Ubuntu 24.04 / Linux Mint 22.x (x86_64):
 sudo apt install ./release/black-linux_*.deb
 ```
 
-## Test status (version 0.1.2)
+## Test status (version 0.1.3)
 
 The following results are recorded for the project; they do not imply testing on all hardware.
 
@@ -192,12 +196,19 @@ The following results are recorded for the project; they do not imply testing on
 | Vulkan renderer on Intel HD 620 | ✅ Running smoothly since 0.1.1 |
 | Android touch controls hidden on laptops | ✅ 0.1.2 |
 | Host updates without a full recompile (object cache) | ✅ Since 0.1.1 |
+| "Black Linux" title watermark, Linux port credit and project links | ✅ 0.1.3 |
 
 ## Credits
 
 - **XboxXBE-Recomp SDK** by TGP482 (MIT): `sdk/`.
 - **Black for Android** by Rangga Casper (MIT): `src/`, `desktop/`, `config/`, `data/`.
 - Third-party libraries (SDL3, Dear ImGui, glslang, Zydis, toml++) are downloaded during the build. See `sdk/THIRD_PARTY.txt`.
-- Linux desktop port and `.deb` packaging: **Katon17**.
+- Linux desktop port and `.deb` packaging: **Katon Bagaskoro** ([Katon17](https://github.com/Katon17)).
 
 License: MIT (see `LICENSE`).
+
+## Support the project
+
+- YouTube: https://www.youtube.com/@KabakoNT
+- Saweria: https://saweria.co/Kabako
+- Ko-fi: https://ko-fi.com/katonbagaskoro

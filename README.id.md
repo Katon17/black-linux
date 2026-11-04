@@ -53,9 +53,11 @@ Screenshot sistem dan pengaturan mendokumentasikan konfigurasi yang terlihat. RA
 
 ## 1. Install (di ThinkPad X270)
 
+> ⚠️ **Wajib punya copy game asli milikmu sendiri.** File `.deb` ini hanya berisi recompiler, runtime, dan launcher. **Tidak ada kode maupun data game di dalamnya**, dan game tidak bisa dimainkan tanpa `.iso` atau `default.xbe` milikmu (lihat langkah 2).
+
 ```bash
 # download .deb dari halaman Releases dulu
-sudo apt install ./black-linux_0.1.2_amd64.deb
+sudo apt install ./black-linux_0.1.3_amd64.deb
 ```
 
 `apt` otomatis menginstal dependensi yang dibutuhkan: `clang`, `lld`, `libvulkan1`, `mesa-vulkan-drivers`, `python3`, dan `zenity`. Totalnya sekitar 150–250 MB.
@@ -129,6 +131,7 @@ Setelah itu, setiap kali main game langsung jalan.
 | `the recompiler stopped` | Bukan rilis USA/Europe, atau file ISO rusak. Cek `build.log`. |
 | Layar hitam atau crash saat start | `sudo apt install --reinstall mesa-vulkan-drivers`, lalu kirim isi `logs/`. |
 | Muncul tombol sentuh Android di layar | Sudah diperbaiki di 0.1.2. Update `.deb`, lalu jalankan `black-linux-build` (cuma link ulang, sekitar 1 menit). |
+| Di log muncul `error: quit: ConfirmWarning, FEAudio failed` | Tidak berbahaya: dialog konfirmasi QUIT gagal meminjam suara klik dari menu utama. Game tidak terganggu, dan `Exit (0)` berarti game keluar dengan normal. |
 | Muncul peringatan "different release" | Copy game-nya beda versi dan kemungkinan besar crash. |
 
 ---
@@ -158,7 +161,8 @@ Proyek ini dibangun di atas:
 - `desktop/input.cpp`, `update.cpp`, `touch.cpp`: bagian JNI dihapus, dan path skin diarahkan ke `/usr/share`.
 - `desktop/vulkan.cpp`: surface Vulkan tidak lagi butuh window Android (sumber crash `renderer init failed` di 0.1.0), dan GPU dipilih otomatis: diskrit, lalu terintegrasi.
 - `desktop/touch.cpp`: tombol sentuh disembunyikan dan mode awal pakai keyboard/mouse. Overlay baru muncul kalau layar sentuh benar-benar disentuh.
-- `src/common/menu.cpp`: halaman Touch/Gyro diganti halaman Controller, dan menu "Check for updates" (khusus Android) dihapus.
+- `src/common/menu.cpp`: halaman Touch/Gyro diganti halaman Controller, dan menu "Check for updates" (khusus Android) dihapus. Halaman Credits mencantumkan port Linux dan link proyek ini (YouTube, GitHub, Saweria, Ko-fi).
+- `src/game/fps_counter.cpp`: tulisan di menu utama sekarang "Black Linux".
 - `src/d3d/render_thread.cpp`: perbandingan state yang tadinya pakai NEON (ARM) diberi versi **SSE2** untuk x86_64.
 - `sdk/tools/recomp/main.cpp`: mode `XBE_HEADER_ONLY`, supaya host bisa di-build tanpa file game.
 
@@ -168,7 +172,7 @@ Proyek ini dibangun di atas:
 sudo apt install ./release/black-linux_*.deb
 ```
 
-## Status pengujian (versi 0.1.2)
+## Status pengujian (versi 0.1.3)
 
 | Bagian | Status |
 |---|---|
@@ -176,12 +180,19 @@ sudo apt install ./release/black-linux_*.deb
 | Renderer Vulkan di Intel HD 620 | ✅ lancar (sejak 0.1.1) |
 | Tombol sentuh Android tidak muncul di laptop | ✅ 0.1.2 |
 | Update host tanpa compile ulang penuh (cache objek) | ✅ sejak 0.1.1 |
+| Tulisan "Black Linux", kredit port Linux, dan link proyek | ✅ 0.1.3 |
 
 ## Kredit
 
 - **XboxXBE-Recomp SDK** oleh TGP482 (MIT): `sdk/`.
 - **Black for Android** oleh Rangga Casper (MIT): `src/`, `desktop/`, `config/`, `data/`.
 - Library pihak ketiga (SDL3, Dear ImGui, glslang, Zydis, toml++) diunduh saat build. Lihat `sdk/THIRD_PARTY.txt`.
-- Port desktop Linux dan paket `.deb`: **Katon17**.
+- Port desktop Linux dan paket `.deb`: **Katon Bagaskoro** ([Katon17](https://github.com/Katon17)).
 
 Lisensi: MIT (lihat `LICENSE`).
+
+## Dukung proyek ini
+
+- YouTube: https://www.youtube.com/@KabakoNT
+- Saweria: https://saweria.co/Kabako
+- Ko-fi: https://ko-fi.com/katonbagaskoro

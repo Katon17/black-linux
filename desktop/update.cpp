@@ -3,6 +3,6 @@
 
 namespace host {
 
-void CheckForUpdates() { SDL_OpenURL("https://github.com/RanggaCasper/Black-Android/releases"); }
+void CheckForUpdates() { SDL_OpenURL("https://github.com/Katon17/black-linux/releases"); }
 
 }  // namespace host
