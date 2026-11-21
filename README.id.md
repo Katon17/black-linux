@@ -1,5 +1,7 @@
 # Black (Xbox, 2006) — Port Native Linux untuk Linux Mint 22.3
 
+[![Listed on PlayPorted](https://playported.com/badge.svg)](https://playported.com/ports/1189-black/)
+
 [English](README.md) | **Bahasa Indonesia**
 
 Port **native Linux x86_64** untuk *Black* versi Xbox original. Dibuat dengan **static recompilation**: kode x86 game diterjemahkan ke C++, lalu dikompilasi jadi program Linux biasa (ELF).

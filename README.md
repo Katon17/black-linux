@@ -1,5 +1,7 @@
 # Black (Xbox, 2006) — Native Linux Port
 
+[![Listed on PlayPorted](https://playported.com/badge.svg)](https://playported.com/ports/1189-black/)
+
 **English** | [Bahasa Indonesia](README.id.md)
 
 A **native Linux x86_64** port of the original Xbox version of *Black*, built using **static recompilation**: the game's x86 code is translated into C++ and compiled into a native Linux executable (ELF).
