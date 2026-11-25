@@ -12,7 +12,7 @@ This is **not** an emulator, Wine/Proton, Electron, or a web engine. Graphics us
 
 **Download:** get `black-linux_<version>_amd64.deb` from [Releases](https://github.com/Katon17/black-linux/releases).
 
-**Target platforms:** Ubuntu 24.04 / Linux Mint 22.x (x86_64).
+**Target platforms:** Ubuntu 24.04+ / Debian 13+ and derivatives, x86_64 (requires **glibc 2.38+**). See [Supported distros](#supported-distros).
 
 ## Benchmark
 
@@ -54,6 +54,22 @@ The system and settings screenshots document the visible configuration. Single-c
 </details>
 
 ---
+
+## Supported distros
+
+The `.deb` needs **glibc 2.38 or newer**, so what matters is the distro's *base version*, not just its name. Check yours with `ldd --version`.
+
+| Distro | Base | Status |
+|---|---|---|
+| Linux Mint 22.x | Ubuntu 24.04 | ✅ Tested (22.3) |
+| Ubuntu 24.04 or newer | — | ✅ Should work |
+| Pop!_OS 24.04 | Ubuntu 24.04 | ✅ Should work |
+| Zorin OS 18 | Ubuntu 24.04 | ✅ Should work |
+| Debian 13 (Trixie) / MX Linux 25 | Debian 13 | ⚠️ Should work, not tested yet |
+| Ubuntu 22.04, Pop!_OS 22.04, Zorin OS 17 | Ubuntu 22.04 | ❌ glibc 2.35 is too old |
+| Debian 12, MX Linux 23 | Debian 12 | ❌ glibc 2.36 is too old |
+
+Test reports from other distros are welcome: please open an issue.
 
 ## 1. Install
 

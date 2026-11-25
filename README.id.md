@@ -12,6 +12,8 @@ Port **native Linux x86_64** untuk *Black* versi Xbox original. Dibuat dengan **
 
 **Download:** ambil `black-linux_<versi>_amd64.deb` di halaman [Releases](https://github.com/Katon17/black-linux/releases).
 
+**Distro yang didukung:** Ubuntu 24.04+ / Debian 13+ dan turunannya, x86_64 (butuh **glibc 2.38+**). Lihat [Distro yang didukung](#distro-yang-didukung).
+
 ## Benchmark
 
 *Dilaporkan oleh penguji pada perangkat miliknya; performa di perangkat lain bisa berbeda. Rentang performa berikut merupakan pengamatan, bukan hasil perekaman frame time atau rata-rata terukur.*
@@ -53,7 +55,23 @@ Screenshot sistem dan pengaturan mendokumentasikan konfigurasi yang terlihat. RA
 
 ---
 
-## 1. Install (di ThinkPad X270)
+## Distro yang didukung
+
+File `.deb` ini butuh **glibc 2.38 atau lebih baru**. Jadi yang menentukan adalah *versi basis* distronya, bukan cuma namanya. Cek punyamu dengan `ldd --version`.
+
+| Distro | Basis | Status |
+|---|---|---|
+| Linux Mint 22.x | Ubuntu 24.04 | ✅ Sudah diuji (22.3) |
+| Ubuntu 24.04 atau lebih baru | — | ✅ Seharusnya bisa |
+| Pop!_OS 24.04 | Ubuntu 24.04 | ✅ Seharusnya bisa |
+| Zorin OS 18 | Ubuntu 24.04 | ✅ Seharusnya bisa |
+| Debian 13 (Trixie) / MX Linux 25 | Debian 13 | ⚠️ Seharusnya bisa, belum diuji |
+| Ubuntu 22.04, Pop!_OS 22.04, Zorin OS 17 | Ubuntu 22.04 | ❌ glibc 2.35 terlalu lama |
+| Debian 12, MX Linux 23 | Debian 12 | ❌ glibc 2.36 terlalu lama |
+
+Laporan hasil tes dari distro lain sangat diterima: silakan buka issue.
+
+## 1. Install
 
 > ⚠️ **Wajib punya copy game asli milikmu sendiri.** File `.deb` ini hanya berisi recompiler, runtime, dan launcher. **Tidak ada kode maupun data game di dalamnya**, dan game tidak bisa dimainkan tanpa `.iso` atau `default.xbe` milikmu (lihat langkah 2).
 
